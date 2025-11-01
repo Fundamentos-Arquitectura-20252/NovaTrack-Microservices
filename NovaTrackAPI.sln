@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManagement.API", "FleetManagement.API\FleetManagement.API.csproj", "{FC4DC632-7C9F-4D6E-80FC-3B45E7353B88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{7D8F4719-9859-4959-8DD8-828089A3A461}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC4DC632-7C9F-4D6E-80FC-3B45E7353B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC4DC632-7C9F-4D6E-80FC-3B45E7353B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC4DC632-7C9F-4D6E-80FC-3B45E7353B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC4DC632-7C9F-4D6E-80FC-3B45E7353B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D8F4719-9859-4959-8DD8-828089A3A461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D8F4719-9859-4959-8DD8-828089A3A461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D8F4719-9859-4959-8DD8-828089A3A461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D8F4719-9859-4959-8DD8-828089A3A461}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
