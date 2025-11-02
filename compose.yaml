@@ -1,4 +1,16 @@
 ﻿services:
+  iam.api:
+    image: iam.api
+    build:
+      context: .
+      dockerfile: IAM.API/Dockerfile
+  
+  fleetmanagement.api:
+    image: fleetmanagement.api
+    build:
+      context: .
+      dockerfile: FleetManagement.API/Dockerfile
+  
   maintenance.api:
     image: maintenance.api
     build:
@@ -10,4 +22,10 @@
     build:
       context: .
       dockerfile: Personnel.API/Dockerfile
+
+  analytics.api:
+    image: analytics.api
+    build:
+      context: .
+      dockerfile: Analytics.API/Dockerfile
 

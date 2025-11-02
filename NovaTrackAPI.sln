@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Personnel.API", "Personnel.API\Personnel.API.csproj", "{9FAB28F9-0FD2-4D6A-86C2-F3F5A30D729D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics.API", "Analytics.API\Analytics.API.csproj", "{6D57D956-EB0D-4754-966C-FCE3C549B7AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,5 +43,9 @@ Global
 		{9FAB28F9-0FD2-4D6A-86C2-F3F5A30D729D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FAB28F9-0FD2-4D6A-86C2-F3F5A30D729D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FAB28F9-0FD2-4D6A-86C2-F3F5A30D729D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
