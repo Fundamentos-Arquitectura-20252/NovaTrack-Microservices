@@ -5,3 +5,9 @@
       context: .
       dockerfile: Maintenance.API/Dockerfile
 
+  personnel.api:
+    image: personnel.api
+    build:
+      context: .
+      dockerfile: Personnel.API/Dockerfile
+
