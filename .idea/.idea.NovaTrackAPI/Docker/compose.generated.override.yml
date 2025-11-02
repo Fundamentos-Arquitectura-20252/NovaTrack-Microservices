@@ -1,0 +1,74 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  fleetmanagement.api:
+    build:
+      context: "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI"
+      dockerfile: "FleetManagement.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/FleetManagement.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "fleetmanagement.api:dev"
+    ports: []
+    volumes:
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI\\FleetManagement.API:/app:rw"
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI:/src:rw"
+    - "C:\\Users\\USUARIO\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  iam.api:
+    build:
+      context: "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI"
+      dockerfile: "IAM.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/IAM.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "iam.api:dev"
+    ports: []
+    volumes:
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI\\IAM.API:/app:rw"
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI:/src:rw"
+    - "C:\\Users\\USUARIO\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  maintenance.api:
+    build:
+      context: "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI"
+      dockerfile: "Maintenance.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/Maintenance.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "maintenance.api:dev"
+    ports: []
+    volumes:
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI\\Maintenance.API:/app:rw"
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI:/src:rw"
+    - "C:\\Users\\USUARIO\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
+  personnel.api:
+    build:
+      context: "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI"
+      dockerfile: "Personnel.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/Personnel.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "personnel.api:dev"
+    ports: []
+    volumes:
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI\\Personnel.API:/app:rw"
+    - "D:\\u\\fundamentos de arquitectura\\microservices\\NovaTrackAPI:/src:rw"
+    - "C:\\Users\\USUARIO\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"

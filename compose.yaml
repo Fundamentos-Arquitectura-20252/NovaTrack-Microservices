@@ -4,28 +4,111 @@
     build:
       context: .
       dockerfile: IAM.API/Dockerfile
-  
+    depends_on:
+      - iam.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=iam.db;port=3306;database=iamdb;user=root;password=iam123
+    ports:
+      - "5001:8080"
+
+  iam.db:
+    image: mysql:8.0
+    container_name: iam-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: iam123
+      MYSQL_DATABASE: iamdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - iam-db-data:/var/lib/mysql
+
   fleetmanagement.api:
     image: fleetmanagement.api
     build:
       context: .
       dockerfile: FleetManagement.API/Dockerfile
-  
+    depends_on:
+      - fleet.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=fleet.db;port=3306;database=fleetdb;user=root;password=fleet123
+    ports:
+      - "5002:8080"
+
+  fleet.db:
+    image: mysql:8.0
+    container_name: fleet-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: fleet123
+      MYSQL_DATABASE: fleetdb
+    ports:
+      - "3308:3306"
+    volumes:
+      - fleet-db-data:/var/lib/mysql
+
   maintenance.api:
     image: maintenance.api
     build:
       context: .
       dockerfile: Maintenance.API/Dockerfile
+    depends_on:
+      - maintenance.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=maintenance.db;port=3306;database=maintenancedb;user=root;password=main123
+    ports:
+      - "5003:8080"
+
+  maintenance.db:
+    image: mysql:8.0
+    container_name: maintenance-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: main123
+      MYSQL_DATABASE: maintenancedb
+    ports:
+      - "3309:3306"
+    volumes:
+      - maintenance-db-data:/var/lib/mysql
 
   personnel.api:
     image: personnel.api
     build:
       context: .
       dockerfile: Personnel.API/Dockerfile
+    depends_on:
+      - personnel.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=personnel.db;port=3306;database=personneldb;user=root;password=pers123
+    ports:
+      - "5004:8080"
 
-  analytics.api:
-    image: analytics.api
-    build:
-      context: .
-      dockerfile: Analytics.API/Dockerfile
+  personnel.db:
+    image: mysql:8.0
+    container_name: personnel-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pers123
+      MYSQL_DATABASE: personneldb
+    ports:
+      - "3310:3306"
+    volumes:
+      - personnel-db-data:/var/lib/mysql
+
+volumes:
+  iam-db-data:
+  fleet-db-data:
+  maintenance-db-data:
+  personnel-db-data:
+
+
+#  analytics.api:
+#    image: analytics.api
+#    build:
+#      context: .
+#      dockerfile: Analytics.API/Dockerfile
 
