@@ -1,0 +1,7 @@
+﻿services:
+  maintenance.api:
+    image: maintenance.api
+    build:
+      context: .
+      dockerfile: Maintenance.API/Dockerfile
+
