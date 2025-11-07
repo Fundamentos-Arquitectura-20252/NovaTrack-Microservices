@@ -7,6 +7,7 @@ using System.Reflection;
 using IAM.API.Infrastructure.Persistence;
 using IAM.API.Infrastructure.Extensions;
 using IAM.API.Infrastructure.Persistence;
+using Steeltoe.Discovery.Eureka;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddSharedInfrastructure(builder.Configuration);
 
 // Add Bounded Context Services
 builder.Services.AddIAMServices();
+builder.Services.AddEurekaDiscoveryClient();
 
 // Add CORS
 builder.Services.AddCors(options =>
