@@ -1,4 +1,14 @@
 ﻿services:
+  eureka:
+    image: steeltoeoss/eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - eureka.instance.hostname=eureka
+      - eureka.client.registerWithEureka=false
+      - eureka.client.fetchRegistry=false
+
   iam.api:
     image: iam.api
     build:
@@ -6,9 +16,11 @@
       dockerfile: IAM.API/Dockerfile
     depends_on:
       - iam.db
+      - eureka
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=server=iam.db;port=3306;database=iamdb;user=root;password=iam123
+      - eureka:client:serviceUrl=http://eureka:8761/eureka/
     ports:
       - "5001:8080"
 
@@ -31,9 +43,11 @@
       dockerfile: FleetManagement.API/Dockerfile
     depends_on:
       - fleet.db
+      - eureka
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=server=fleet.db;port=3306;database=fleetdb;user=root;password=fleet123
+      - eureka:client:serviceUrl=http://eureka:8761/eureka/
     ports:
       - "5002:8080"
 
@@ -56,9 +70,11 @@
       dockerfile: Maintenance.API/Dockerfile
     depends_on:
       - maintenance.db
+      - eureka
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=server=maintenance.db;port=3306;database=maintenancedb;user=root;password=main123
+      - eureka:client:serviceUrl=http://eureka:8761/eureka/
     ports:
       - "5003:8080"
 
@@ -81,9 +97,11 @@
       dockerfile: Personnel.API/Dockerfile
     depends_on:
       - personnel.db
+      - eureka
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=server=personnel.db;port=3306;database=personneldb;user=root;password=pers123
+      - eureka:client:serviceUrl=http://eureka:8761/eureka/
     ports:
       - "5004:8080"
 
@@ -99,16 +117,37 @@
     volumes:
       - personnel-db-data:/var/lib/mysql
 
+  analytics.api:
+    image: analytics.api
+    build:
+      context: .
+      dockerfile: Analytics.API/Dockerfile
+    depends_on:
+      - analytics.db
+      - eureka
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=analytics.db;port=3306;database=analyticsdb;user=root;password=analyt123
+      - eureka:client:serviceUrl=http://eureka:8761/eureka/
+    ports:
+      - "5005:8080"
+  
+  analytics.db:
+    image: mysql:8.0
+    container_name: analytics-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: analyt123
+      MYSQL_DATABASE: analyticsdb
+    ports:
+      - "3311:3306"
+    volumes:
+      - analytics-db-data:/var/lib/mysql
+
+
 volumes:
   iam-db-data:
   fleet-db-data:
   maintenance-db-data:
   personnel-db-data:
-
-
-#  analytics.api:
-#    image: analytics.api
-#    build:
-#      context: .
-#      dockerfile: Analytics.API/Dockerfile
-
+  analytics-db-data:
