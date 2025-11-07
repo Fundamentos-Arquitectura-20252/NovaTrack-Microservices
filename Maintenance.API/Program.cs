@@ -5,6 +5,7 @@ using Maintenance.API.Infrastructure.Extensions;
 using System.Text.Json.Serialization;
 using System.Reflection;
 using Maintenance.API.Infrastructure.Persistence;
+using Steeltoe.Discovery.Eureka;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,10 +39,11 @@ builder.Services.AddMediatR(cfg =>
 });
 
 // Add Shared Infrastructure (includes shared services)
-builder.Services.AddSharedInfrastructure(builder.Configuration);
+//builder.Services.AddSharedInfrastructure(builder.Configuration);
 
 // Add Bounded Context Services
 builder.Services.AddMaintenanceServices();
+builder.Services.AddEurekaDiscoveryClient();
 
 
 // Add CORS
