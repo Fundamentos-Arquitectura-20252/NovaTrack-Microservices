@@ -143,11 +143,23 @@
       - "3311:3306"
     volumes:
       - analytics-db-data:/var/lib/mysql
-
+      
+  api-gateway:
+    image: api-gateway
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - eureka:client:serviceUrl=http://eureka:8761/eureka/
 
 volumes:
   iam-db-data:
   fleet-db-data:
   maintenance-db-data:
   personnel-db-data:
-  analytics-db-data:
+  analytics-db-data:  

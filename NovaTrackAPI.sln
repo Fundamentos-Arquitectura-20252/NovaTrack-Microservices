@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Personnel.API", "Personnel.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analytics.API", "Analytics.API\Analytics.API.csproj", "{6D57D956-EB0D-4754-966C-FCE3C549B7AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api-gateway", "api-gateway\api-gateway.csproj", "{AF2B6C60-B880-4E7F-85C2-22CF5BC6CF72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,5 +49,9 @@ Global
 		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D57D956-EB0D-4754-966C-FCE3C549B7AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2B6C60-B880-4E7F-85C2-22CF5BC6CF72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2B6C60-B880-4E7F-85C2-22CF5BC6CF72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2B6C60-B880-4E7F-85C2-22CF5BC6CF72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2B6C60-B880-4E7F-85C2-22CF5BC6CF72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
