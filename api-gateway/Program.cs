@@ -9,7 +9,7 @@ builder.Services.AddEurekaDiscoveryClient();
 
 // YARP + Eureka dynamic config
 builder.Services.AddSingleton<IProxyConfigProvider, EurekaProxyConfigProvider>();
-builder.Services.AddReverseProxy(); // sin LoadFromConfig
+builder.Services.AddReverseProxy();
 
 var app = builder.Build();
 

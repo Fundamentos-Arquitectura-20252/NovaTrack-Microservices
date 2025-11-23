@@ -218,7 +218,7 @@ app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.Health
 {
     Predicate = check => check.Tags.Contains("ready")
 });
-
+app.MapGet("/iamapi/test", () => "IAM WORKING");
 // Root endpoint
 app.MapGet("/", () => new
 {
