@@ -12,7 +12,7 @@ namespace FleetManagement.API.Interfaces.REST.Controllers
   
     
     [ApiController] // Indicates that this class is an API controller
-    [Route("api/fleet-management/vehicles")] // Defines the route for the controller
+    [Route("/fleetmanagement/vehicles")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Vehicles")] // Adds a tag for grouping in Swagger documentation
     public class VehiclesController : ControllerBase

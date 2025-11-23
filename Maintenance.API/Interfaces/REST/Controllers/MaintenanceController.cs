@@ -12,7 +12,7 @@ using Maintenance.API.Domain.Repositories;
 namespace Maintenance.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("api/maintenance")] // Defines the route for the controller
+    [Route("/maintenance")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Maintenance")]
     public class MaintenanceController : ControllerBase

@@ -7,7 +7,7 @@ using Analytics.API.Interfaces.REST.Resources;
 namespace Analytics.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("api/analytics")] // Defines the route for the controller
+    [Route("/analytics")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Dashboard")]
     public class DashboardController : ControllerBase

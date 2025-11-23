@@ -12,7 +12,7 @@ using Personnel.API.Domain.Model.ValueObjects;
 namespace Personnel.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("api/personnel/drivers")] // Defines the route for the controller
+    [Route("/personnel/drivers")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Drivers")]
     public class DriversController : ControllerBase
