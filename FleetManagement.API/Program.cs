@@ -5,6 +5,7 @@ using FleetManagement.API.Infrastructure.Extensions;
 using System.Text.Json.Serialization;
 using System.Reflection;
 using FleetManagement.API.Infrastructure.Persistence;
+using FleetManagement.API.Interfaces.REST.Middleware;
 using Steeltoe.Discovery.Eureka;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -156,6 +157,13 @@ if (builder.Environment.IsProduction())
 {
     builder.Logging.AddApplicationInsights(); // For Azure Application Insights
 }
+builder.Services.AddSwaggerGen(c =>
+{
+    // CRÍTICO PARA MICROSERVICIOS DETRAS DE GATEWAY:
+    // Esto asegura que el JSON generado use rutas relativas "./" 
+    // en lugar de intentar adivinar la IP/Dominio del contenedor.
+    c.AddServer(new Microsoft.OpenApi.Models.OpenApiServer { Url = "/" });
+});
 
 var app = builder.Build();
 
@@ -163,30 +171,34 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
-        c.RoutePrefix = "swagger";
-        c.DisplayRequestDuration();
-        c.EnableDeepLinking();
-        c.EnableFilter();
-        c.ShowExtensions();
-    });
 }
 else
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
-    
-    // Enable Swagger in production for API documentation
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
-        c.RoutePrefix = "api-docs";
-    });
 }
+
+// Habilitar Swagger SIEMPRE (fuera del if/else)
+// Así funciona tanto en local como en AWS/Azure
+app.UseSwagger(); 
+
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
+    
+    // Mantén "swagger" o string.Empty para que sea consistente
+    // Si pones string.Empty, la UI carga en la raíz: http://microservicio/
+    c.RoutePrefix = "swagger"; 
+    
+    // Opcional: Solo habilitar funcionalidades "extra" en desarrollo si quieres
+    if (app.Environment.IsDevelopment())
+    {
+        c.DisplayRequestDuration();
+        c.EnableDeepLinking();
+        c.EnableFilter();
+        c.ShowExtensions();
+    }
+});
 
 // Security headers
 app.UseHttpsRedirection();
@@ -207,7 +219,7 @@ app.UseSharedInfrastructure(app.Environment);
 // Authentication & Authorization (when implemented)
 // app.UseAuthentication();
 // app.UseAuthorization();
-
+app.UseMiddleware<ErrorHandlerMiddleware>();
 // API Controllers
 app.MapControllers();
 
@@ -260,10 +272,18 @@ app.UseExceptionHandler(errorApp =>
             var logger = context.RequestServices.GetService<ILogger<Program>>();
             logger?.LogError(error.Error, "Unhandled exception occurred");
             
+            var message = "An internal server error occurred";
+            if (error.Error is ArgumentException || error.Error is InvalidOperationException)
+            {
+                context.Response.StatusCode = 400;
+                message = error.Error.Message;
+            }
+
             await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new
             {
                 success = false,
-                message = "An internal server error occurred",
+                message = message,
+                exceptionType = error.Error.GetType().Name,
                 timestamp = DateTime.UtcNow,
                 environment = app.Environment.EnvironmentName
             }));

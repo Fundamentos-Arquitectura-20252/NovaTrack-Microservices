@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Primitives;
 using Steeltoe.Common.Discovery;
 using Yarp.ReverseProxy.Configuration;
-        
+
 public class EurekaProxyConfigProvider : IProxyConfigProvider
 {
     private readonly IDiscoveryClient _discoveryClient;
@@ -15,12 +15,14 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
     {
         Console.WriteLine(">>> Provider CREATED!");
         _discoveryClient = discoveryClient;
+        // Inicializamos config
         _config = BuildConfigAsync(_currentCts.Token).GetAwaiter().GetResult();
         StartRefreshLoop();
-        Console.WriteLine(">>> EUREKA ROUTES:");
+        
+        // Log para verificar qué rutas detectó
+        Console.WriteLine(">>> EUREKA ROUTES DETECTED:");
         foreach (var r in _config.Routes)
-            Console.WriteLine(" - " + r.RouteId + " | " + r.Match.Path);
-
+            Console.WriteLine($" - ID: {r.RouteId} | Path: {r.Match.Path}");
     }
         
     public IProxyConfig GetConfig()
@@ -39,15 +41,11 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
                     await Task.Delay(_refreshInterval, _currentCts.Token);
                     var newConfig = await BuildConfigAsync(_currentCts.Token);
         
-                    // Replace config and signal change token if different
                     lock (_sync)
                     {
-                        // crude equality check: different counts or cluster ids -> update
                         bool different = newConfig.Routes.Count != _config.Routes.Count || newConfig.Clusters.Count != _config.Clusters.Count;
-        
                         if (!different)
                         {
-                            // further check ids
                             var oldRouteIds = _config.Routes.Select(r => r.RouteId).OrderBy(x => x);
                             var newRouteIds = newConfig.Routes.Select(r => r.RouteId).OrderBy(x => x);
                             different = !oldRouteIds.SequenceEqual(newRouteIds);
@@ -55,20 +53,14 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
         
                         if (different)
                         {
-                            // cancel previous token so YARP reloads
                             _currentCts.Cancel();
                             _currentCts = new CancellationTokenSource();
-        
-                            // wrap new routes/clusters into InMemoryConfig with new token
                             _config = new InMemoryConfig(newConfig.Routes, newConfig.Clusters, _currentCts.Token);
                         }
                     }
                 }
                 catch (OperationCanceledException) { break; }
-                catch
-                {
-                    // swallow – will retry on next loop; consider logging
-                }
+                catch { }
             }
         });
     }
@@ -78,20 +70,24 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
         var routes = new List<RouteConfig>();
         var clusters = new List<ClusterConfig>();
 
-        // Normalizamos y deduplicamos serviceIds
         var rawServiceIds = await _discoveryClient.GetServiceIdsAsync(cancellationToken);
 
+        // VOLVEMOS A TU LÓGICA ORIGINAL:
+        // 1. Normalizamos los IDs primero
         var normalizedIds = rawServiceIds
             .Select(id => id.ToLowerInvariant().Replace(".api", "").Replace(".", ""))
             .Distinct()
             .ToList();
 
+        // 2. Iteramos sobre los IDs YA NORMALIZADOS (como lo tenías antes)
         foreach (var normalizedId in normalizedIds)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Obtener instancias usando el serviceId REAL original
+            // 3. Pedimos a Eureka usando el ID NORMALIZADO (Esto es lo que te funcionaba)
             var instances = await _discoveryClient.GetInstancesAsync(normalizedId, cancellationToken);
+
+            if (!instances.Any()) continue;
 
             var destinations = instances
                 .Select((instance, index) =>
@@ -110,6 +106,7 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
                 Destinations = destinations
             });
 
+            // Agregamos la ruta con la Transformación necesaria para el Gateway
             routes.Add(new RouteConfig
             {
                 RouteId = normalizedId,
@@ -117,6 +114,15 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
                 Match = new RouteMatch
                 {
                     Path = $"/{normalizedId}/{{**catch-all}}"
+                },
+                // ESTO ES LO NUEVO QUE NECESITAS PARA SWAGGER/YARP:
+                // Sin esto, la ruta llega duplicada al microservicio.
+                Transforms = new List<IReadOnlyDictionary<string, string>>
+                {
+                    new Dictionary<string, string>
+                    {
+                        { "PathRemovePrefix", $"/{normalizedId}" }
+                    }
                 }
             });
         }
@@ -124,8 +130,6 @@ public class EurekaProxyConfigProvider : IProxyConfigProvider
         return new InMemoryConfig(routes, clusters, cancellationToken);
     }
 
-
-        
     private class InMemoryConfig : IProxyConfig
     {
         public InMemoryConfig(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters, CancellationToken token)

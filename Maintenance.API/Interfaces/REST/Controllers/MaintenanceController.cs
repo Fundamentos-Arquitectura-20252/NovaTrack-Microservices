@@ -12,7 +12,7 @@ using Maintenance.API.Domain.Repositories;
 namespace Maintenance.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("/maintenance")] // Defines the route for the controller
+    [Route("/api")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Maintenance")]
     public class MaintenanceController : ControllerBase
@@ -272,6 +272,16 @@ namespace Maintenance.API.Interfaces.REST.Controllers
                     error = ex.Message 
                 });
             }
+        }
+        
+        [HttpGet("health")]
+        public ActionResult HealthCheck()
+        {
+            return Ok(new {
+                success = true,
+                message = "Maintenance service is running",
+                timestamp = DateTime.UtcNow
+            });
         }
     }
 }

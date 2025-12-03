@@ -10,7 +10,7 @@ using FleetManagement.API.Interfaces.REST.Transform;
 namespace FleetManagement.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("/fleetmanagement/fleets")] // Defines the route for the controller
+    [Route("/api/fleets")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Fleets")]
     public class FleetsController : ControllerBase

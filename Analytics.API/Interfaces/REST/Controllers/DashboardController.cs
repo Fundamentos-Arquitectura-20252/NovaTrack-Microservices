@@ -7,7 +7,7 @@ using Analytics.API.Interfaces.REST.Resources;
 namespace Analytics.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("/analytics")] // Defines the route for the controller
+    [Route("/api")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Dashboard")]
     public class DashboardController : ControllerBase
@@ -83,6 +83,15 @@ namespace Analytics.API.Interfaces.REST.Controllers
                     error = ex.Message 
                 });
             }
+        }
+        [HttpGet("health")]
+        public ActionResult HealthCheck()
+        {
+            return Ok(new {
+                success = true,
+                message = "Analytics service is running",
+                timestamp = DateTime.UtcNow
+            });
         }
     }
 }

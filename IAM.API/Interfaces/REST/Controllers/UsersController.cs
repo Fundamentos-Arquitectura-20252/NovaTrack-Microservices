@@ -9,7 +9,7 @@ using IAM.API.Interfaces.REST.Transform;
 namespace IAM.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("/iamapi/users")] // Defines the route for the controller
+    [Route("/api/users")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Users")]
     public class UsersController : ControllerBase

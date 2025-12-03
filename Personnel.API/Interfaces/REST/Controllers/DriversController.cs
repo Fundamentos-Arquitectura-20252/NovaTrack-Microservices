@@ -12,7 +12,7 @@ using Personnel.API.Domain.Model.ValueObjects;
 namespace Personnel.API.Interfaces.REST.Controllers
 {
     [ApiController]
-    [Route("/personnel/drivers")] // Defines the route for the controller
+    [Route("/api/drivers")] // Defines the route for the controller
     [Produces(MediaTypeNames.Application.Json)] // Specifies that the API produces JSON responses
     [Tags("Drivers")]
     public class DriversController : ControllerBase
@@ -251,6 +251,15 @@ namespace Personnel.API.Interfaces.REST.Controllers
                 });
             }
         }
+        [HttpGet("health")]
+        public ActionResult HealthCheck()
+        {
+            return Ok(new {
+                success = true,
+                message = "Personnel service is running",
+                timestamp = DateTime.UtcNow
+            });
+        }
     }
 }
 
@@ -347,4 +356,5 @@ namespace Personnel.API.Interfaces.REST.Transform
             );
         }
     }
+    
 }
