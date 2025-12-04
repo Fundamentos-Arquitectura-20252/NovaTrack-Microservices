@@ -9,7 +9,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // El origen de tu React/Vue/Angular
+        policy.WithOrigins("http://localhost:3000", "https://novatrack-web-application.onrender.com") // El origen de tu React/Vue/Angular
             .AllowAnyMethod()                     // GET, POST, PUT, DELETE, OPTIONS
             .AllowAnyHeader()                     // Authorization, Content-Type, etc.
             .AllowCredentials();                  // Necesario si envías cookies o tokens
