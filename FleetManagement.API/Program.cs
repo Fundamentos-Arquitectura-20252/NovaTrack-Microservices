@@ -81,6 +81,17 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.AddServer(new OpenApiServer 
+    { 
+        Url = "/fleetmanagement", 
+        Description = "Gateway (Producción/Docker)" 
+    });
+    
+    c.AddServer(new OpenApiServer 
+    { 
+        Url = "/", 
+        Description = "Local (Directo sin Gateway)" 
+    });
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "NovaTrack Platform API",

@@ -80,6 +80,17 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.AddServer(new OpenApiServer 
+    { 
+        Url = "/personnel", 
+        Description = "Gateway (Producción/Docker)" 
+    });
+    
+    c.AddServer(new OpenApiServer 
+    { 
+        Url = "/", 
+        Description = "Local (Directo sin Gateway)" 
+    });
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "NovaTrack Platform API",
@@ -160,33 +171,25 @@ if (builder.Environment.IsProduction())
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+app.UseSwagger(); 
+
+app.UseSwaggerUI(c =>
 {
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
+    
+    // Mantén "swagger" o string.Empty para que sea consistente
+    // Si pones string.Empty, la UI carga en la raíz: http://microservicio/
+    c.RoutePrefix = "swagger"; 
+    
+    // Opcional: Solo habilitar funcionalidades "extra" en desarrollo si quieres
+    if (app.Environment.IsDevelopment())
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
-        c.RoutePrefix = "swagger";
         c.DisplayRequestDuration();
         c.EnableDeepLinking();
         c.EnableFilter();
         c.ShowExtensions();
-    });
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-    
-    // Enable Swagger in production for API documentation
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
-        c.RoutePrefix = "api-docs";
-    });
-}
+    }
+});
 
 // Security headers
 app.UseHttpsRedirection();

@@ -42,11 +42,25 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", p => p
 var app = builder.Build();
 
 // Swagger UI
-if (app.Environment.IsDevelopment())
+app.UseSwagger(); 
+
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "NovaTrack Platform API v1");
+    
+    // Mantén "swagger" o string.Empty para que sea consistente
+    // Si pones string.Empty, la UI carga en la raíz: http://microservicio/
+    c.RoutePrefix = "swagger"; 
+    
+    // Opcional: Solo habilitar funcionalidades "extra" en desarrollo si quieres
+    if (app.Environment.IsDevelopment())
+    {
+        c.DisplayRequestDuration();
+        c.EnableDeepLinking();
+        c.EnableFilter();
+        c.ShowExtensions();
+    }
+});
 
 app.UseCors("AllowAll");
 
