@@ -63,6 +63,7 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = string.Empty; 
 });
 
+app.UseCors("PermitirFrontend");
 // --- 4. Activar YARP ---
 app.MapReverseProxy();
 
