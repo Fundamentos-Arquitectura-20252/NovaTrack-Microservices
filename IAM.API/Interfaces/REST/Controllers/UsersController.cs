@@ -5,6 +5,7 @@ using IAM.API.Domain.Model.Commands;
 using IAM.API.Domain.Model.Queries;
 using IAM.API.Interfaces.REST.Resources;
 using IAM.API.Interfaces.REST.Transform;
+using IAM.API.Infrastructure;
 
 namespace IAM.API.Interfaces.REST.Controllers
 {
@@ -15,10 +16,12 @@ namespace IAM.API.Interfaces.REST.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IJwtService _jwtService;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, IJwtService jwtService)
         {
             _mediator = mediator;
+            _jwtService = jwtService;
         }
 
         [HttpPost("sign-up")]
@@ -35,11 +38,18 @@ namespace IAM.API.Interfaces.REST.Controllers
                 var query = new GetUserByIdQuery(userId);
                 var user = await _mediator.Send(query);
                 
+                if (user == null)
+                    return StatusCode(500, new { success = false, message = "User created but could not be retrieved" });
+
+                var (token, expiresAt) = _jwtService.GenerateToken(user.Id, user.Email, $"{user.FirstName} {user.LastName}", user.Role);
+
+                var auth = new AuthenticatedUserResource(user.Id, user.FirstName, user.LastName, user.Email, user.Role, token, expiresAt);
+
                 return CreatedAtAction(nameof(GetUserById), new { id = userId }, new
                 {
                     success = true,
                     message = "User registered successfully",
-                    user = user
+                    user = auth
                 });
             }
             catch (InvalidOperationException ex)
@@ -72,12 +82,15 @@ namespace IAM.API.Interfaces.REST.Controllers
                 
                 var query = new GetUserByIdQuery(userId);
                 var user = await _mediator.Send(query);
+                
+                if (user == null)
+                    return Unauthorized(new { success = false, message = "Invalid credentials" });
 
-                return Ok(new { 
-                    success = true, 
-                    message = "Login successful", 
-                    user = user 
-                });
+                var (token, expiresAt) = _jwtService.GenerateToken(user.Id, user.Email, $"{user.FirstName} {user.LastName}", user.Role);
+
+                var auth = new AuthenticatedUserResource(user.Id, user.FirstName, user.LastName, user.Email, user.Role, token, expiresAt);
+
+                return Ok(new { success = true, message = "Login successful", user = auth });
             }
             catch (UnauthorizedAccessException)
             {

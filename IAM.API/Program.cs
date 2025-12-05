@@ -45,7 +45,40 @@ builder.Services.AddSharedInfrastructure(builder.Configuration);
 
 // Add Bounded Context Services
 builder.Services.AddIAMServices();
-builder.Services.AddEurekaDiscoveryClient();
+
+// Register JwtSettings and JwtService
+builder.Services.Configure<IAM.API.Infrastructure.JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddSingleton<IAM.API.Infrastructure.IJwtService, IAM.API.Infrastructure.JwtService>();
+
+// Configure Authentication/JWT
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var jwtSettings = jwtSection.Get<IAM.API.Infrastructure.JwtSettings>();
+if (jwtSettings != null)
+{
+    var key = System.Text.Encoding.UTF8.GetBytes(jwtSettings.Key);
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key)
+        };
+    });
+
+    builder.Services.AddAuthorization();
+}
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -72,7 +105,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Add Authentication & Authorization (placeholder for future JWT implementation)
+// Authentication & Authorization (placeholder for future JWT implementation)
 // builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //     .AddJwtBearer(options => { /* JWT config #1# });
 // builder.Services.AddAuthorization();
@@ -191,6 +224,11 @@ else
 
 // Security headers
 app.UseHttpsRedirection();
+
+// Use authentication/authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("X-Frame-Options", "DENY");
