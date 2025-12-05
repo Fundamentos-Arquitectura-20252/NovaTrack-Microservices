@@ -25,7 +25,7 @@ namespace IAM.API.Interfaces.REST.Controllers
         }
 
         [HttpPost("sign-up")]
-        public async Task<ActionResult<UserResource>> SignUp([FromBody] SignUpResource resource)
+        public async Task<ActionResult<AuthenticatedUserResource>> SignUp([FromBody] SignUpResource resource)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -45,12 +45,8 @@ namespace IAM.API.Interfaces.REST.Controllers
 
                 var auth = new AuthenticatedUserResource(user.Id, user.FirstName, user.LastName, user.Email, user.Role, token, expiresAt);
 
-                return CreatedAtAction(nameof(GetUserById), new { id = userId }, new
-                {
-                    success = true,
-                    message = "User registered successfully",
-                    user = auth
-                });
+                // Return created resource (AuthenticatedUserResource) directly
+                return CreatedAtAction(nameof(GetUserById), new { id = userId }, auth);
             }
             catch (InvalidOperationException ex)
             {
@@ -70,7 +66,7 @@ namespace IAM.API.Interfaces.REST.Controllers
         }
 
         [HttpPost("sign-in")]
-        public async Task<ActionResult<UserResource>> SignIn([FromBody] SignInResource resource)
+        public async Task<ActionResult<AuthenticatedUserResource>> SignIn([FromBody] SignInResource resource)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -90,7 +86,8 @@ namespace IAM.API.Interfaces.REST.Controllers
 
                 var auth = new AuthenticatedUserResource(user.Id, user.FirstName, user.LastName, user.Email, user.Role, token, expiresAt);
 
-                return Ok(new { success = true, message = "Login successful", user = auth });
+                // Return the authenticated user resource directly
+                return Ok(auth);
             }
             catch (UnauthorizedAccessException)
             {
